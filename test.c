@@ -1,13 +1,18 @@
 #include<stdio.h>
+#include<stdlib.h>
+
 struct Student
 {
     char* name;
     int marks;
 };
+struct Student stTable[10];
 int main(){
-    int A[] = {1,2,3,4,5};
-    int *p = A;
-    int **p = &A;
-    printf("array=%d\n arr A = %d\n, array of pointer = %d\n, **P=%d\n", p,A,&p, **p);
+    struct Student* s;
+    struct Student f= {"name 2",88};
+     s = &f;
+     stTable[0] = f;
+     stTable[9] = *s;
+   printf("%s\n",stTable[9].name);
     return 0;
 }

@@ -8,7 +8,7 @@ struct symbol {
 
 struct ref {
     struct ref* next;
-    char* filename;
+    char filename;
     int flags;
     int lineno;
 };
@@ -22,6 +22,7 @@ static int symcompare(const void*, const void*);
 static unsigned symhash(char*);
 void printrefs();
 char* curfilename;
+void iniHashTable();
 %}
 
 %%
@@ -42,7 +43,8 @@ on |
 or |
 that |
 the |
-this  {;}
+this |
+\n  {;}
 [a-z]+(\'(s|t))?  { 
     addref(yylineno, curfilename, yytext, 0); 
     }
@@ -52,7 +54,7 @@ int main(int argc,char** argv)
 {
         int i;
         if(argc < 2) {
-            curfilename = "(stdin)";
+            curfilename = stdin;
             yylineno = 1;
             yylex();
         } else
@@ -71,22 +73,27 @@ int main(int argc,char** argv)
 }
  //printrefs();
 }
+void iniHashTable(){
+    // for(int i =0; i<NHASH; i++){
+    //     symtab[i]=NULL;
+    // }
+}
 void addref(int lineno, char *filename, char* word, int flags)
 {
-    printf("lineno=%i, filename=%s, word=%s, flag=%i",lineno, filename, word, flags);
+   // printf("lineno=%i, filename=%s, word=%s, flag=%i",lineno, filename, word, flags);
     struct ref* r;
     struct symbol* sp = lookup(word);
     // /* don't do dups of same line and file */
-    // if(sp->reflist &&
-    // sp->reflist->lineno == lineno &&
-    // sp->reflist->filename == filename) return;
-    // r = malloc(sizeof(struct ref));
-    // if(!r) {fputs("out of space\n", stderr); abort(); }
-    // r->next = sp->reflist;
-    // r->filename = filename;
-    // r->lineno = lineno;
-    // r->flags = flags;
-    // sp->reflist = r;
+    if(sp->reflist &&
+    sp->reflist->lineno == lineno &&
+    sp->reflist->filename == filename) return;
+    r = malloc(sizeof(struct ref));
+    if(!r) {fputs("out of space\n", stderr); abort(); }
+    r->next = sp->reflist;
+    r->filename = filename;
+    r->lineno = lineno;
+    r->flags = flags;
+    sp->reflist = r;
 }
 void printrefs()
 {
@@ -145,6 +152,7 @@ struct symbol* lookup(char* sym)
         if(!sp->name) {
             sp->name = strdup(sym);
             sp->reflist = 0;
+            return sp;
         }
         if(++sp >= symtab+NHASH) sp = symtab; 
     }
@@ -153,19 +161,9 @@ struct symbol* lookup(char* sym)
 }
 static unsigned symhash(char* sym)
 {
-    // unsigned int hash = 0;
-    // unsigned c;
-    // while(c = sym++) {
-    //     hash = hash*9 ^ c;
-    // }
-    // return hash;
-        int length = strnlen(sym, MAX_NAME);
-    unsigned int hash_value =0;
-    for (int i = 0; i < length; i++)
-    {
-        hash_value += sym[i];
-        hash_value = hash_value * sym[i]%NHASH;
-    }
-    
-    return hash_value;
+    unsigned int hash = 0;
+    unsigned c;
+    while (c = *sym++)
+        hash = (hash * 9 ^ c) % NHASH;
+    return hash;
 }

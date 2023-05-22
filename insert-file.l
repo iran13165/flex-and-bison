@@ -16,7 +16,8 @@ int popfile(void);
 %%
 ^#[ \t]*include[ \t]*[<] {BEGIN IFILE;}
 <IFILE>[^ \t\n>]+   {
-                    { int c;
+                    { 
+                        int c;
                     while((c = input()) && c != '\n') ;
                     }
                     yylineno++;
@@ -85,7 +86,8 @@ popfile(void)
         if(!prevbs) return 0;
         yy_switch_to_buffer(prevbs->bs);
         curbs = prevbs;
-        yylineno = curbs->lineno;curfilename = curbs->filename;
+        yylineno = curbs->lineno;
+        curfilename = curbs->filename;
         return 1;
 }
 

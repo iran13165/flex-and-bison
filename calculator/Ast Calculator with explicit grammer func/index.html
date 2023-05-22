@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="astcal.js">
+        // var memory = new WebAssembly.Memory({
+        //     initial: 256,
+        //     maximum: 512
+        // });
+
+        // var exports;
+        // WebAssembly.instantiateStreaming(fetch("astcal.wasm"), {
+        //     js: {
+        //         mem: memory
+        //     },
+        //     env: {
+        //         emscripten_resize_heap: memory.grow
+        //     }
+        // }).then(results => {
+        //     exports = results.instance.exports;
+        //     memory = results.instance.exports.memory;
+        // });
+        function fun() {
+            let a = exports.yyparse();
+            console.log(a);
+        }
+    </script>
+
+    <button onclick="fun()">click</button>
+</body>
+
+</html>
